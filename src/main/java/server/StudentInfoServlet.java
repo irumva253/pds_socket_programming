@@ -45,6 +45,8 @@ public class StudentInfoServlet extends HttpServlet {
         System.out.println("Processed " + action + " request in " + duration + "ms");
         
         request.setAttribute("result", result);
+        request.setAttribute("action", action);
+        request.setAttribute("deptId", request.getParameter("listDeptId")); // Pass department ID
         request.getRequestDispatcher("result.jsp").forward(request, response);
     }
     
@@ -90,5 +92,14 @@ public class StudentInfoServlet extends HttpServlet {
         
         System.out.println("Listing students in department: " + deptId);
         return InfoClient.sendRequest("LIST:" + deptId.trim());
+    }
+    
+    private String getDepartmentName(String deptId) {
+        switch(deptId) {
+            case "1": return "Computer Science";
+            case "2": return "Information Technology";
+            case "3": return "Information Systems";
+            default: return "Unknown Department";
+        }
     }
 }

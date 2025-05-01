@@ -53,14 +53,21 @@
         .btn:hover {
             background-color: #2980b9;
         }
-        .result-title {
+        .department-header {
             font-weight: bold;
+            font-size: 18px;
             margin-bottom: 10px;
+            color: #2c3e50;
         }
-        .result-line {
-            margin: 5px 0;
-            padding: 3px 0;
-            border-bottom: 1px solid #eee;
+        .student-item {
+            margin: 8px 0;
+            padding-left: 20px;
+            text-indent: -20px;
+        }
+        .student-item:before {
+            content: counter(student-counter) ". ";
+            counter-increment: student-counter;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -71,13 +78,39 @@
         <div class="result-box ${result.startsWith('RESULT') ? 'success' : 'error'}">
             <% 
             String result = (String) request.getAttribute("result");
+            String action = (String) request.getAttribute("action");
+            
             if (result.startsWith("RESULT:")) {
-                String[] items = result.substring(7).split(";");
-                for (String item : items) {
-                    if (!item.isEmpty()) {
+                if ("list".equals(action)) {
+                    String deptId = (String) request.getAttribute("deptId");
+                    String deptName = "";
+                    if ("1".equals(deptId)) deptName = "Computer Science";
+                    else if ("2".equals(deptId)) deptName = "Information Technology";
+                    else if ("3".equals(deptId)) deptName = "Information Systems";
             %>
-                        <div class="result-line"><%= item %></div>
+                    <div class="department-header">Students in <%= deptName %> Department</div>
+                    <div style="counter-reset: student-counter;">
+                        <% 
+                        String[] students = result.substring(7).split(";");
+                        for (String student : students) {
+                            if (!student.trim().isEmpty()) {
+                        %>
+                                <div class="student-item"><%= student %></div>
+                        <%
+                            }
+                        }
+                        %>
+                    </div>
             <%
+                } else {
+                    // Original display for email/phone lookups
+                    String[] items = result.substring(7).split(";");
+                    for (String item : items) {
+                        if (!item.isEmpty()) {
+            %>
+                            <div class="result-line"><%= item %></div>
+            <%
+                        }
                     }
                 }
             } else {
